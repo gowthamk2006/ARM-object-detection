@@ -1,199 +1,193 @@
-ARM-Object-Detection
-Real-Time Object Detection using Hardware-Accelerated YOLO CNN on Xilinx Zynq FPGA (ARM + FPGA Co-Design)
-1. Introduction
+# ARM-Object-Detection
+
+## Real-Time Object Detection using Hardware-Accelerated YOLO CNN on Xilinx Zynq FPGA (ARM + FPGA Co-Design)
+
+---
+
+## 1. Introduction
 
 This project presents the hardware–software co-design and implementation of a YOLO-based Convolutional Neural Network (CNN) accelerated on a Xilinx Zynq FPGA platform with an integrated ARM processing system.
 
-The primary objective is to achieve real-time object detection with reduced latency and optimized power consumption by offloading computationally intensive CNN operations to the Programmable Logic (PL), while control, preprocessing, and post-processing are handled by the Processing System (PS).
+The objective is to achieve real-time object detection with reduced latency and optimized power consumption by offloading computationally intensive CNN operations to the Programmable Logic (PL), while control and preprocessing are handled by the Processing System (PS).
 
-2. System Architecture Overview
+---
+
+## 2. System Architecture Overview
 
 The system follows a heterogeneous ARM + FPGA architecture.
 
-Processing System (PS – ARM Cortex-A9)
+### Processing System (PS – ARM Cortex-A9)
 
-Image acquisition
+- Image acquisition  
+- Frame preprocessing  
+- Data formatting  
+- Post-processing (Bounding box decoding, NMS)  
+- System control and FPGA communication  
 
-Frame preprocessing
+### Programmable Logic (PL – FPGA Fabric)
 
-Data formatting
-
-Post-processing (Bounding box decoding, NMS)
-
-System control and FPGA communication
-
-Programmable Logic (PL – FPGA Fabric)
-
-Convolution acceleration
-
-Activation functions (ReLU / Leaky ReLU)
-
-Pooling layers
-
-Fully connected computation
-
-Parallel MAC array implementation
+- Convolution acceleration  
+- Activation functions (ReLU / Leaky ReLU)  
+- Pooling layers  
+- Fully connected computation  
+- Parallel MAC array implementation  
 
 Communication between PS and PL is achieved using AXI interfaces (AXI4 / AXI-Lite / AXI-Stream).
 
-3. Input Specifications
-Parameter	Value
-Camera Resolution	1280 × 720
-Model Input Resolution	640 × 640
-Color Format	RGB
-Target Frame Rate	20 FPS
+---
+
+## 3. Input Specifications
+
+| Parameter | Value |
+|-----------|--------|
+| Camera Resolution | 1280 × 720 |
+| Model Input Resolution | 640 × 640 |
+| Color Format | RGB |
+| Target Frame Rate | 20 FPS |
 
 Frame size after resizing:
 
 640 × 640 × 3 bytes ≈ 1.2 MB per frame
-4. Software Pipeline (ARM Processor)
-4.1 Preprocessing Stage
 
-Operations:
+---
 
-Image resizing (bilinear interpolation)
+## 4. Software Pipeline (ARM Processor)
 
-Pixel normalization
+### 4.1 Preprocessing Stage
 
-Tensor transformation (HWC → CHW format)
+**Operations**
 
-Execution Time (Approximate):
+- Image resizing (bilinear interpolation)  
+- Pixel normalization  
+- Tensor transformation (HWC → CHW format)  
 
-Operation	Time
-Resize	~6 ms
-Normalization	~2 ms
-Tensor Conversion	~2 ms
+**Execution Time**
 
-Total Preprocessing Latency ≈ 10 ms
+- Resize: ~6 ms  
+- Normalization: ~2 ms  
+- Tensor Conversion: ~2 ms  
 
-4.2 Post-Processing Stage
+Total preprocessing latency ≈ 10 ms.
 
-Bounding box decoding
+---
 
-Confidence threshold filtering
+### 4.2 Post-Processing Stage
 
-Non-Maximum Suppression (NMS)
+- Bounding box decoding  
+- Confidence threshold filtering  
+- Non-Maximum Suppression (NMS)  
+- Final object classification mapping  
 
-Final object classification mapping
+Post-processing is executed on the ARM processor.
 
-Post-processing is executed on the ARM processor to avoid unnecessary FPGA resource utilization.
+---
 
-5. FPGA CNN Accelerator Architecture
+## 5. FPGA CNN Accelerator Architecture
 
 The CNN accelerator is implemented using:
 
-Verilog RTL, or
+- Verilog RTL  
+- High-Level Synthesis (HLS C++)  
 
-High-Level Synthesis (HLS C++)
+### 5.1 Accelerated Layers
 
-5.1 Accelerated Layers
+- Convolution layers  
+- Activation layers  
+- Max pooling layers  
+- Fully connected layers  
 
-Convolution layers
+### 5.2 Architectural Optimizations
 
-Activation layers
+- Parallel Multiply-Accumulate (MAC) units  
+- Loop unrolling  
+- Deep pipelining  
+- On-chip BRAM buffering  
+- Reduced off-chip DDR access  
+- AXI burst-based memory transfer  
 
-Max pooling layers
+### 5.3 Dataflow Strategy
 
-Fully connected layers
+- Weight buffering in BRAM  
+- Streaming input feature maps  
+- Output feature map pipelining  
+- Layer-wise processing  
 
-5.2 Architectural Optimizations
+---
 
-Parallel Multiply-Accumulate (MAC) units
+## 6. Performance Metrics
 
-Loop unrolling
+- Input Resolution: 640 × 640  
+- Preprocessing Latency: ~10 ms  
+- FPGA Inference Latency: ~15–25 ms  
+- Total System Latency: ~30–40 ms  
+- Achieved Frame Rate: ~20 FPS  
+- Power Consumption: Lower than GPU-based systems  
 
-Deep pipelining
+---
 
-On-chip BRAM buffering
+## 7. Hardware–Software Partitioning
 
-Reduced off-chip DDR memory access
+### ARM (Processing System)
 
-AXI burst-based memory transfers
+- Control logic  
+- Memory management  
+- Preprocessing  
+- Post-processing  
+- System orchestration  
 
-5.3 Dataflow Strategy
+### FPGA (Programmable Logic)
 
-Weight buffering in BRAM
+- Convolution operations  
+- MAC-intensive layers  
+- Feature map computation  
 
-Streaming input feature maps
+---
 
-Output feature map pipelining
+## 8. Project Directory Structure
 
-Layer-wise sequential processing
+ARM-Object-Detection  
+│  
+├── software/  
+│   ├── main.cpp  
+│   ├── preprocessing.cpp  
+│   ├── postprocessing.cpp  
+│  
+├── hardware/  
+│   ├── cnn_accel.h  
+│   ├── cnn_accel.cpp  
+│   ├── cnn_accel.v  
+│  
+├── training/  
+│   └── yolo_training.ipynb  
+│  
+└── README.md  
 
-This strategy minimizes memory bottlenecks and improves hardware utilization efficiency.
+---
 
-6. Performance Metrics
-Metric	Value
-Input Resolution	640 × 640
-Preprocessing Latency	~10 ms
-FPGA Inference Latency	~15–25 ms
-Total System Latency	~30–40 ms
-Achieved Frame Rate	~20 FPS
-Power Consumption	Lower than GPU-based systems
-7. Hardware–Software Partitioning
-ARM (Processing System)
+## 9. FPGA Implementation Flow
 
-Control logic
+1. CNN accelerator design (RTL / HLS)  
+2. Synthesis using Vivado / Vitis HLS  
+3. Implementation (Place & Route)  
+4. Bitstream generation  
+5. AXI integration with Zynq PS  
+6. Deployment on hardware  
+7. Real-time inference validation  
 
-Memory management
+---
 
-Preprocessing
+## 10. Applications
 
-Post-processing
+- Smart surveillance systems  
+- Autonomous robotic systems  
+- Industrial safety monitoring  
+- Embedded vision platforms  
+- Edge AI accelerators  
 
-System orchestration
+---
 
-FPGA (Programmable Logic)
+## Author
 
-Convolution operations
-
-MAC-intensive layers
-
-Feature map computation
-
-This partitioning ensures optimal utilization of both computational domains.
-
-8. Project Directory Structure
-ARM-Object-Detection
-│
-├── software/
-│   ├── main.cpp
-│   ├── preprocessing.cpp
-│   ├── postprocessing.cpp
-│
-├── hardware/
-│   ├── cnn_accel.h
-│   ├── cnn_accel.cpp
-│   ├── cnn_accel.v
-│
-├── training/
-│   └── yolo_training.ipynb
-│
-└── README.md
-9. FPGA Implementation Flow
-
-CNN accelerator design (RTL / HLS)
-
-Synthesis using Vivado / Vitis HLS
-
-Implementation (Place & Route)
-
-Bitstream generation
-
-AXI integration with Zynq PS
-
-Deployment on hardware
-
-Real-time inference validation
-
-10. Applications
-
-Smart surveillance systems
-
-Autonomous robotic systems
-
-Industrial safety monitoring
-
-Embedded vision platforms
-
-Edge AI accelerators
+Gowtham S  
+AICTE Internship – Embedded Systems  
+Domain: FPGA Architecture | VLSI | Edge AI Acceleration
