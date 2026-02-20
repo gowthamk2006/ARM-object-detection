@@ -185,9 +185,3 @@ ARM-Object-Detection
 - Edge AI accelerators  
 
 ---
-
-## Author
-
-Gowtham S  
-AICTE Internship – Embedded Systems  
-Domain: FPGA Architecture | VLSI | Edge AI Acceleration
