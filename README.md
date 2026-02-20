@@ -36,8 +36,11 @@ The PS and PL communicate using AXI interfaces.
 
 **3. Input Specifications**
 Camera Resolution : 1280 × 720
+
 Model Input Resolution : 640 × 640
+
 Color Format : RGB
+
 Target Frame Rate : 20 FPS
 
 Frame size after resizing:
